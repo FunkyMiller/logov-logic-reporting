@@ -193,7 +193,7 @@ function InitFields() {
 	       	var fieldid = dataSource[dataSourceSelected]["defaults"][key];
 	       	var fieldidarr = fieldid.split("-");
 	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
-	       	var optValue = key + ":" + fieldid;
+	       	var optValue = key.substring(1,3);
 	       	var optText = fieldname;
 	       	selectedList[selectedList.length] = new Option(optText, optValue);
 	   	}
@@ -205,7 +205,7 @@ function InitFields() {
 	       	var fieldid = dataSource[dataSourceSelected]["other"][key];
 	       	var fieldidarr = fieldid.split("-");
 	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
-	       	var optValue = key + ":" + fieldid;
+	       	var optValue = key.substring(1,3);
 	       	var optText = fieldname;
 	       	availList[availList.length] = new Option(optText, optValue);
 	   	}
@@ -263,7 +263,6 @@ function DelFields() {
 }
 
 function SortList(list) {
-	var currText, currValue;
 	var listOptions = list.options;
 	var listOptLength = listOptions.length;
 	/*while (listOptLength > 0 && listOptions[listOptLength].value < listOptions[listOptLength-1].value) {
@@ -276,17 +275,19 @@ function SortList(list) {
     	listOptLength = listOptLength - 1;
 	} */
 	while (listOptLength > 0) {
-		for (var i = 0; i < listOptLength; i++) {
-			if (listOptions[i].value > listOptions[i+1].value) {
-				tempText = listOptions[i].text;
-				tempValue = listOptions[i].value;
-				listOptions[i].text = listOptions[i+1].text;
-				listOptions[i].value = listOptions[i+1].value;
-				listOptions[i+1].text = tempText;
-				listOptions[i+1].value = tempValue;
+		for (var i = listOptLength; i > 0; i--) {
+			var currText = listOptions[i].text;
+			var currValue = listOptions[i].value;
+			var prevText = listOptions[i-1].text;
+			var prevValue = listOptions[i-1].value;
+			if (currValue < prevValue) {
+				listOptions[i].text = prevText;
+				listOptions[i].value = prevValue;
+				listOptions[i-1].text = currText;
+				listOptions[i-1].value = currValue;
 			}
 		}
-		listOptLength = lsitOptLength - 1;
+		listOptLength = listOptLength - 1;
 	}
 }
 
