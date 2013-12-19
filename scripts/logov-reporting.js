@@ -192,8 +192,10 @@ function InitFields() {
   		 if (dataSource[dataSourceSelected]["defaults"].hasOwnProperty(key)) {
 	       	var fieldid = dataSource[dataSourceSelected]["defaults"][key];
 	       	var fieldidarr = fieldid.split("-");
-	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + "\u00a0\u00a0\u00a0\u00a0" + "(" + fieldid.replace("-",".") + ")";
-	       	selectedList[selectedList.length] = new Option(fieldname, fieldid);
+	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
+	       	var optValue = key + ":" + fieldid;
+	       	var optText = fieldname;
+	       	selectedList[selectedList.length] = new Option(optText, optValue);
 	   	}
   	}
   	
@@ -202,8 +204,10 @@ function InitFields() {
   		 if (dataSource[dataSourceSelected]["other"].hasOwnProperty(key)) {
 	       	var fieldid = dataSource[dataSourceSelected]["other"][key];
 	       	var fieldidarr = fieldid.split("-");
-	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + "\u00a0\u00a0\u00a0\u00a0" + "(" + fieldid.replace("-",".") + ")";
-	       	availList[availList.length] = new Option(fieldname, fieldid);
+	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
+	       	var optValue = key + ":" + fieldid;
+	       	var optText = fieldname;
+	       	availList[availList.length] = new Option(optText, optValue);
 	   	}
   	}
   	if (!(availList.length > -1)) {
@@ -221,23 +225,14 @@ function AddFields(){
   var pickedList = document.getElementById("report_datafields_sel");
   var pickedOptions = pickedList.options;
   var pickedOptLength = pickedOptions.length;
-  var tempText;
-  var tempValue;
+  var tempText, tempValue;
   // An item must be selected
   while (availIndex > -1) {
     pickedOptions[pickedOptLength] = new Option(availList[availIndex].text);
     pickedOptions[pickedOptLength].value = availList[availIndex].value;
     availOptions[availIndex] = null;
     // Sort the pick list
-    while (pickedOptLength > 0 && pickedOptions[pickedOptLength].value < pickedOptions[pickedOptLength-1].value) {
-    	tempText = pickedOptions[pickedOptLength-1].text;
-        tempValue = pickedOptions[pickedOptLength-1].value;
-        pickedOptions[pickedOptLength-1].text = pickedOptions[pickedOptLength].text;
-        pickedOptions[pickedOptLength-1].value = pickedOptions[pickedOptLength].value;
-        pickedOptions[pickedOptLength].text = tempText;
-        pickedOptions[pickedOptLength].value = tempValue;
-        pickedOptLength = pickedOptLength - 1;
-    }
+    SortList(pickedList);
     availIndex = availList.selectedIndex;
     pickedOptLength = pickedOptions.length;
   }
@@ -261,18 +256,38 @@ function DelFields() {
       	var tempText;
       	var tempValue;
       	// Re-sort the select list
-      	while (availOptLength > 0 && availOptions[availOptLength].value < availOptions[availOptLength-1].value) {
-	        tempText = availOptions[availOptLength-1].text;
-        	tempValue = availOptions[availOptLength-1].value;
-        	availOptions[availOptLength-1].text = availOptions[availOptLength].text;
-        	availOptions[availOptLength-1].value = availOptions[availOptLength].value;
-        	availOptions[availOptLength].text = tempText;
-        	availOptions[availOptLength].value = tempValue;
-        	availOptLength = availOptLength - 1;
-      	}
+      	SortList(availList);
     }
     pickedIndex = pickedList.selectedIndex;
     availOptLength = availOptions.length;
+}
+
+function SortList(list) {
+	var currText, currValue;
+	var listOptions = list.options;
+	var listOptLength = listOptions.length;
+	/*while (listOptLength > 0 && listOptions[listOptLength].value < listOptions[listOptLength-1].value) {
+	    tempText = listOptions[listOptLength-1].text;
+        tempValue = listOptions[listOptLength-1].value;
+        listOptions[listOptLength-1].text = listOptions[listOptLength].text;
+        listOptions[listOptLength-1].value = listOptions[listOptLength].value;
+        listOptions[listOptLength].text = tempText;
+        listOptions[listOptLength].value = tempValue;
+    	listOptLength = listOptLength - 1;
+	} */
+	while (listOptLength > 0) {
+		for (var i = 0; i < listOptLength; i++) {
+			if (listOptions[i].value > listOptions[i+1].value) {
+				tempText = listOptions[i].text;
+				tempValue = listOptions[i].value;
+				listOptions[i].text = listOptions[i+1].text;
+				listOptions[i].value = listOptions[i+1].value;
+				listOptions[i+1].text = tempText;
+				listOptions[i+1].value = tempValue;
+			}
+		}
+		listOptLength = lsitOptLength - 1;
+	}
 }
 
 function SelFields(btn) {
@@ -295,4 +310,12 @@ function PageInitialisation() {
 	PopulateDataSources();
 	// Do an initial load of fields for the first data source in the list
 	InitFields();
+}
+
+function repeat(val, n) {
+	var returnVal = "";
+	for (var i = 0; i < n; i++) {
+		returnVal = returnVal + "\u00a0";
+	}
+	return returnVal;
 }
