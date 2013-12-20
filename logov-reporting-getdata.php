@@ -1,0 +1,5 @@
+<?php 
+
+	$myFieldlist = $_GET['']
+
+?>

@@ -179,12 +179,12 @@ function InitFields() {
   	// Some variables for what we are doing
   	var availList = document.getElementById("report_datafields_avail");
   	var availOptions = availList.options;
-  	var selectedList = document.getElementById("report_datafields_sel");
-  	var selectedOptions = availList.options;
+  	var pickedList = document.getElementById("report_datafields_sel");
+  	var pickedOptions = pickedList.options;
   	var i = 0;
   	
   	// clear pickedList and availList
-  	selectedOptions.length = 0;
+  	pickedOptions.length = 0;
   	availOptions.length = 0;
   	 
   	// Populate pickedList with defaults (0 is defaults index, 1 is others index)
@@ -193,9 +193,9 @@ function InitFields() {
 	       	var fieldid = dataSource[dataSourceSelected]["defaults"][key];
 	       	var fieldidarr = fieldid.split("-");
 	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
-	       	var optValue = key.substring(1,3);
+	       	var optValue = key.substring(1,4);
 	       	var optText = fieldname;
-	       	selectedList[selectedList.length] = new Option(optText, optValue);
+	       	pickedList[pickedList.length] = new Option(optText, optValue);
 	   	}
   	}
   	
@@ -205,7 +205,7 @@ function InitFields() {
 	       	var fieldid = dataSource[dataSourceSelected]["other"][key];
 	       	var fieldidarr = fieldid.split("-");
 	       	var fieldname = dataField[fieldidarr[0]][fieldidarr[1]] + repeat("\u00a0", 10) + "(" + fieldid.replace("-",".") + ")";
-	       	var optValue = key.substring(1,3);
+	       	var optValue = key.substring(1,4);
 	       	var optText = fieldname;
 	       	availList[availList.length] = new Option(optText, optValue);
 	   	}
@@ -219,24 +219,10 @@ function InitFields() {
 
 // Add datafield to fieldlist
 function AddFields(){
-  var availList = document.getElementById("report_datafields_avail");
-  var availIndex = availList.selectedIndex;
-  var availOptions = availList.options;
-  var pickedList = document.getElementById("report_datafields_sel");
-  var pickedOptions = pickedList.options;
-  var pickedOptLength = pickedOptions.length;
-  var tempText, tempValue;
-  // An item must be selected
-  while (availIndex > -1) {
-    pickedOptions[pickedOptLength] = new Option(availList[availIndex].text);
-    pickedOptions[pickedOptLength].value = availList[availIndex].value;
-    availOptions[availIndex] = null;
-    // Sort the pick list
-    SortList(pickedList);
-    availIndex = availList.selectedIndex;
-    pickedOptLength = pickedOptions.length;
-  }
-  availOptions[0].selected = true;
+  	var availList = document.getElementById("report_datafields_avail");
+  	var pickedList = document.getElementById("report_datafields_sel");
+  	MoveSelected(availList, pickedList);
+  	availList.options[0].selected = true;
 }
 
 // remove datafield from fieldlist
@@ -247,35 +233,35 @@ function DelFields() {
   	var pickedList = document.getElementById("report_datafields_sel");
   	var pickedIndex = pickedList.selectedIndex;
   	var pickedOptions = pickedList.options;
-  	while (pickedIndex > -1) {
+  	MoveSelected(pickedList, availList);
+  	/*while (pickedIndex > -1) {
   		availOptions[availOptLength] = new Option(pickedList[pickedIndex].text);
       	availOptions[availOptLength].value = pickedList[pickedIndex].value;
-    }
-    pickedOptions[pickedIndex] = null;
-    if (singleSelect && sortSelect) {
-      	var tempText;
-      	var tempValue;
-      	// Re-sort the select list
-      	SortList(availList);
-    }
-    pickedIndex = pickedList.selectedIndex;
-    availOptLength = availOptions.length;
+    	pickedOptions[pickedIndex] = null;
+	    SortList(availList);
+	    pickedIndex = pickedList.selectedIndex;
+	    availOptLength = availOptions.length;
+   } */
+}
+
+function MoveSelected(sourceList, destList) {
+	var sourceIndex = sourceList.selectedIndex;
+	var destSize = destList.options.length;
+	while (sourceIndex > -1) {
+	    destList.options[destSize] = new Option(sourceList[sourceIndex].text);
+	    destList.options[destSize].value = sourceList[sourceIndex].value;
+	    sourceList.options[sourceIndex] = null;
+	    SortList(destList);
+	    sourceIndex = sourceList.selectedIndex;
+	    destSize = destList.options.length;
+  	}
 }
 
 function SortList(list) {
 	var listOptions = list.options;
 	var listOptLength = listOptions.length;
-	/*while (listOptLength > 0 && listOptions[listOptLength].value < listOptions[listOptLength-1].value) {
-	    tempText = listOptions[listOptLength-1].text;
-        tempValue = listOptions[listOptLength-1].value;
-        listOptions[listOptLength-1].text = listOptions[listOptLength].text;
-        listOptions[listOptLength-1].value = listOptions[listOptLength].value;
-        listOptions[listOptLength].text = tempText;
-        listOptions[listOptLength].value = tempValue;
-    	listOptLength = listOptLength - 1;
-	} */
-	while (listOptLength > 0) {
-		for (var i = listOptLength; i > 0; i--) {
+	while (listOptLength > -1) {
+		for (var i = listOptLength-1; i > 0; i--) {
 			var currText = listOptions[i].text;
 			var currValue = listOptions[i].value;
 			var prevText = listOptions[i-1].text;

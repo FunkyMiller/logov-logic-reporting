@@ -1,3 +1,4 @@
+<?php require_once "logov-reporting-functions.php"; ?>
 <HTML>
 <HEAD>
 	<meta name="description" content="LoGov Logic Reporting">
@@ -38,7 +39,9 @@
 					<td><select NAME="report_datafields_sel" ID="report_datafields_sel" SIZE="10" multiple="multiple" style="width: 250px"></select></td>
 				</tr>
 				<tr>
-					<td ALIGN="left"><input TYPE="reset" VALUE="Reset" ONCLICK="initFields();></td>
+					<td></td>
+					<td></td>
+					<td ALIGN="left"><input TYPE="reset" VALUE="Reset" ONCLICK="InitFields();"></td>
 					<td></td>
 					<td ALIGN="right"><input TYPE="submit" VALUE="Submit"></td>
 				</tr>
